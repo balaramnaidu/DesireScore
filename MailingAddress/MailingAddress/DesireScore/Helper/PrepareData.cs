@@ -43,24 +43,29 @@ namespace DesireScore.Helper
                     }
 
                     var inc = 0;
+                    var startAddressFindString = string.Empty;
+                    var ind = 0;
+                    var number = 0;
+                    var zpid = string.Empty;
+                    var dataArray = new string[2];
                     foreach (var a in ret)
                     {
-                        var startAddressFindString = responseJson.Substring(a, 100).Replace(searchstring, "");
-                        var ind = startAddressFindString.IndexOf(searchstring1);
-                        var number = ret1[inc];
-                        var zpid = responseJson.Substring(number + searchZpIdString.Length, 8);
-
+                        startAddressFindString = responseJson.Substring(a, 100).Replace(searchstring, "");
+                        ind = startAddressFindString.IndexOf(searchstring1);
+                        number = ret1[inc];
+                        zpid = responseJson.Substring(number + searchZpIdString.Length, 8);
                         if (ind > 0)
                         {
+                            dataArray = Utility.GetPriceforZPId(zpid);
                             var sc2 = new DesireScoreModel
                             {
                                 ResAddress = startAddressFindString.Substring(0, ind),
-                                Price = Utility.GetPriceforZPId(zpid)[0],
-                                HOA = Utility.GetPriceforZPId(zpid)[1]
+                                Price = dataArray[0],
+                                HOA = dataArray[1]
                             };
-                            //sc2.Score = StaticRandom.Instance.Next(500, 1000).ToString();
+                            sc2.Score = StaticRandom.Instance.Next(500, 1000).ToString();
                             var propInfo = Utility.GetScore(sc2.ResAddress.Replace(" ", "+"), "", sc2.Price, sc2.HOA, serviceId);
-                            sc2.Score = propInfo.DesirabilityScore.ToString();
+                            //sc2.Score = propInfo.DesirabilityScore.ToString();
                             sc2.Bathrooms = propInfo.Bathrooms;
                             sc2.Bedrooms = propInfo.Bedrooms;
                             sc2.HomeType = propInfo.HomeType;
